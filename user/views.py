@@ -75,8 +75,6 @@ class UserActivateView(APIView):
     params = request.query_params
     token = params.get('token')
     username = params.get('username')
-    if username is None or token is None:
-      return Response(data='Token not found', status=status.HTTP_400_BAD_REQUEST)
 
     if username: 
       try:
