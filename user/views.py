@@ -75,6 +75,9 @@ class UserActivateView(APIView):
     params = request.query_params
     token = params.get('token')
     username = params.get('username')
+    if username is None or token is None:
+      return Response(data='Token not found', status=status.HTTP_400_BAD_REQUEST)
+
     if username: 
       try:
         user = User.objects.get(username=username)
@@ -82,7 +85,6 @@ class UserActivateView(APIView):
         return Response(data='Username not found. Please check again', status=status.HTTP_400_BAD_REQUEST)
       else:
         send_activate_email(user)
-        return Response(status=status.HTTP_202_ACCEPTED)
       
     if token:
       try:        
@@ -95,9 +97,9 @@ class UserActivateView(APIView):
         short_token.delete()
         user.save()
         short_token.save()
-        return Response(status=status.HTTP_200_OK)
-    else:
-      return Response(data='Token not found', status=status.HTTP_400_BAD_REQUEST)
+        
+    return Response(status=status.HTTP_200_OK)
+      
 
   
 class UserCrudView(GenericAPIView):
