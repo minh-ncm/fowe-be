@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'blog.apps.BlogConfig',
     'stock.apps.StockConfig',
+    'vision.apps.VisionConfig',
 ]
 
 MIDDLEWARE = [
