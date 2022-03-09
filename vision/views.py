@@ -14,19 +14,27 @@ class VisionCrudView(APIView):
         data = request.data
         model_name = data.get('model')
         image = Image.open(request.FILES['image'])
+        image.thumbnail((1000, 1000))
+        image_color = np.mean(np.array(image), axis=0)
+        image_color = np.mean(image_color, axis=0)
+        min_chanel = np.argmin(image_color)
+        if min_chanel == 0:
+            color = (255, 0, 0)
+        elif min_chanel == 1:
+            color = (0, 255, 0)
+        else:
+            color = (0, 0, 255)
         draw = ImageDraw.Draw(image)
-        font = ImageFont.load_default()
+        font = ImageFont.truetype('vision/static/vision/BeVietnamPro-Regular.ttf', size=20)
         
         if model_name == 'yolo':
             model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
             pred = model(image)
             df = pred.pandas().xyxy[0]
-            print(df)
             for value in df.values:
                 xmin, ymin, xmax, ymax, confi, _, name = value
-                if confi >= 0.5:
-                    draw.rectangle([(xmin, ymin), (xmax, ymax)], outline='green')
-                    draw.text((xmin, ymin - font.getsize('foo')[1]), f'{name} - {confi*100:.1f}%', 'green', font)
+                draw.rectangle([(xmin, ymin), (xmax, ymax)], outline=color, width=2)
+                draw.text((xmin, ymin - font.getsize('foo')[1] - 5), name, color, font)
         byte_image = io.BytesIO()
         image.save(byte_image, format='JPEG')
         
