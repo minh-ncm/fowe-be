@@ -209,4 +209,5 @@ ALPHA_VANTAGE_KEY = env('ALPHA_VANTAGE_KEY')
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://fowe.herokuapp.com',
+    'https://fowe.herokuapp.com',
 ]
